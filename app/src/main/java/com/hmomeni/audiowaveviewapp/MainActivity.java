@@ -4,6 +4,7 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ViewTreeObserver;
 
 import com.hmomeni.audiowaveview.views.AudioWaveView;
 
@@ -22,7 +23,12 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 //		copyAssets();
 		audioWaveView = (AudioWaveView) findViewById(R.id.audioWaveView);
-		audioWaveView.setAudioFilePath(new File(getFilesDir(), "1.mp3"));
+		audioWaveView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				audioWaveView.setAudioFilePath(new File(getFilesDir(), "1.mp3"));
+			}
+		});
 	}
 
 	private void copyAssets() {

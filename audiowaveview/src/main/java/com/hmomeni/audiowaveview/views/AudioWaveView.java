@@ -21,10 +21,10 @@ import java.io.IOException;
 public class AudioWaveView extends View {
 	private static final String TAG = "AudioWaveView";
 	private Paint barPaint, bgPaint;
-	private int mWidth, mHeight;
-	private int barWidth = 20;
+	private float mWidth, mHeight;
+	private float barWidth = 20;
 	private int barCount;
-	private int min = Integer.MAX_VALUE, max = 0;
+	private float min = Integer.MAX_VALUE, max = 0;
 
 	private File audioFilePath;
 	private int[] downSampledFrameGains;
@@ -64,7 +64,8 @@ public class AudioWaveView extends View {
 		canvas.drawRect(0, 0, mWidth, mHeight, bgPaint);
 		if (downSampledFrameGains != null) {
 			for (int i = 0; i < barCount; i++) {
-				canvas.drawRect(i * barWidth, (float) (mHeight - (Math.random() * mHeight / 2)), ((i + 1) * barWidth) - 5, mHeight, barPaint);
+				float frame = downSampledFrameGains[i] / max;
+				canvas.drawRect(i * barWidth, mHeight - (frame * mHeight/2), ((i + 1) * barWidth) - 5, mHeight, barPaint);
 			}
 		}
 	}
@@ -74,7 +75,7 @@ public class AudioWaveView extends View {
 		super.onSizeChanged(w, h, oldw, oldh);
 		mWidth = w;
 		mHeight = h;
-		barCount = mWidth / barWidth;
+//		barCount = mWidth / barWidth;
 	}
 
 
@@ -93,7 +94,7 @@ public class AudioWaveView extends View {
 			});
 			int[] frameGains = cheapSoundFile.getFrameGains();
 			int sourceRate = frameGains.length;
-			int targetRate = 1000;
+			int targetRate = 50;
 			int index = 0;
 			downSampledFrameGains = new int[targetRate];
 			for (int i = 0; i < targetRate; i++) {
@@ -109,6 +110,7 @@ public class AudioWaveView extends View {
 				downSampledFrameGains[i] = A / blockSize;
 			}
 			barCount = targetRate;
+			barWidth = mWidth / barCount;
 			calculateMinAndMax();
 			invalidate();
 
