@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-//		copyAssets();
+		setContentView(R.layout.activity_main_main);
+		copyAssets();
 		audioWaveView = (AudioWaveView) findViewById(R.id.audioWaveView);
 		audioWaveView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override

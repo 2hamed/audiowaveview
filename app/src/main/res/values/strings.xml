@@ -1,3 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">AudioWaveViewApp</string>
+
+    <string name="app_name">HeartBeatAnalyser</string>
+    <string name="action_settings">Settings</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="equalizer">EQ</string>
+    <string name="normal">Normal</string>
+    <string name="heart">Heart</string>
+    <string name="sample">Sample Rate</string>
+
+    <string-array name="sample_rate">
+        <item>8000</item>
+        <item>16000</item>
+        <item>22050</item>
+        <item>44100</item>
+        <item>48000</item>
+    </string-array>
+
+    <string name="analyse">Analyse</string>
+    <string name="player">Player</string>
+    <string name="title_activity_file_picker">File Picker</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="Recorder">Rec</string>
+    <string name="title_activity_player">Player</string>
+    <string name="title_activity_tab">TabActivity</string>
+    <string name="title_section1">Analyze</string>
+    <string name="title_section2">PlayBack</string>
+
 </resources>
