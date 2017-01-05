@@ -9,15 +9,25 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.hmomeni.audiowaveview.utils.soundfile.CheapSoundFile;
+
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Created by hamed on 10/24/16.in AudioWaveViewApp
  */
 
 public class AudioWaveView extends View {
-	Paint barPaint, bgPaint;
-	int mWidth, mHeight;
-	int barWidth = 20;
-	int barCount;
+	private static final String TAG = "AudioWaveView";
+	private Paint barPaint, bgPaint;
+	private int mWidth, mHeight;
+	private int barWidth = 20;
+	private int barCount;
+	private int min = Integer.MAX_VALUE, max = 0;
+
+	private File audioFilePath;
+	private int[] downSampledFrameGains;
 
 	public AudioWaveView(Context context) {
 		super(context);
@@ -52,8 +62,10 @@ public class AudioWaveView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.drawRect(0, 0, mWidth, mHeight, bgPaint);
-		for (int i = 0; i < barCount; i++) {
-			canvas.drawRect(i * barWidth, 10, ((i + 1) * barWidth) - 5, mHeight, barPaint);
+		if (downSampledFrameGains != null) {
+			for (int i = 0; i < barCount; i++) {
+				canvas.drawRect(i * barWidth, (float) (mHeight - (Math.random() * mHeight / 2)), ((i + 1) * barWidth) - 5, mHeight, barPaint);
+			}
 		}
 	}
 
@@ -63,5 +75,56 @@ public class AudioWaveView extends View {
 		mWidth = w;
 		mHeight = h;
 		barCount = mWidth / barWidth;
+	}
+
+
+	public void setAudioFilePath(File audioFilePath) {
+		this.audioFilePath = audioFilePath;
+		processFile();
+	}
+
+	private void processFile() {
+		try {
+			CheapSoundFile cheapSoundFile = CheapSoundFile.create(audioFilePath.getAbsolutePath(), new CheapSoundFile.ProgressListener() {
+				@Override
+				public boolean reportProgress(double fractionComplete) {
+					return true;
+				}
+			});
+			int[] frameGains = cheapSoundFile.getFrameGains();
+			int sourceRate = frameGains.length;
+			int targetRate = 1000;
+			int index = 0;
+			downSampledFrameGains = new int[targetRate];
+			for (int i = 0; i < targetRate; i++) {
+				int A = 0;
+				int windowOffset = sourceRate / targetRate;
+				int blockSize = 0;
+				while (windowOffset > 0) {
+					A += frameGains[index];
+					windowOffset--;
+					index++;
+					blockSize++;
+				}
+				downSampledFrameGains[i] = A / blockSize;
+			}
+			barCount = targetRate;
+			calculateMinAndMax();
+			invalidate();
+
+		} catch (IOException | NullPointerException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void calculateMinAndMax() {
+		for (int i = 0; i < barCount; i++) {
+			if (downSampledFrameGains[i] > max) {
+				max = downSampledFrameGains[i];
+			}
+			if (downSampledFrameGains[i] < min) {
+				min = downSampledFrameGains[i];
+			}
+		}
 	}
 }

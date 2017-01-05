@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.hmomeni.audiowaveview.utils.soundfile.CheapSoundFile;
+import com.hmomeni.audiowaveview.views.AudioWaveView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,23 +14,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
+	AudioWaveView audioWaveView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//copyAssets();
-		try {
-			CheapSoundFile cheapSoundFile = CheapSoundFile.create(getFilesDir() + "/1.mp3", new CheapSoundFile.ProgressListener() {
-				@Override
-				public boolean reportProgress(double fractionComplete) {
-					return true;
-				}
-			});
-			cheapSoundFile.getNumFrames();
-		} catch (IOException | NullPointerException e) {
-			e.printStackTrace();
-		}
+//		copyAssets();
+		audioWaveView = (AudioWaveView) findViewById(R.id.audioWaveView);
+		audioWaveView.setAudioFilePath(new File(getFilesDir(), "1.mp3"));
 	}
 
 	private void copyAssets() {
